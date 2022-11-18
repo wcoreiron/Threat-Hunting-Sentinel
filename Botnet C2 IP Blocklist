@@ -1,0 +1,33 @@
+#Dridex, Heodo (aka Emotet), TrickBot, QakBot (aka QuakBot / Qbot) and BazarLoader (aka BazarBackdoor) botnet command&control servers (C2s) 
+#usually reside on compromised servers and such that have been rented and setup by the threat actor itself for the sole purpose of botnet hosting. 
+#Feodo Tracker offers a blocklist of IP addresses that are associated with such botnet C2s. It can be used to block botnet C2 traffic from infected 
+#machines towards hostline servers on the internet that are under the control of cybercriminals.
+#To keep the false positive rate as low as possible, an IP address will only get added to the blocklist if it responds with a valid botnet C2 response
+#The Botnet C2 IP Blocklist gets generated every 5 minutes and is available in the plain-text and JSON format. We recommend you to update the list at 
+#least every 15 minutes (or even better: every 5 minutes) to receive the best protection against Dridex, Emotet, TrickBot, QakBot and BazarLoader.
+
+
+
+##Sentinel
+let ThreatIntelFeed = externaldata(DestIP: string)[@"https://feodotracker.abuse.ch/downloads/ipblocklist_recommended.txt"] with (format="txt", ignoreFirstRecord=True);
+let IPRegex = '[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}';
+let MaliciousIP = materialize (
+     ThreatIntelFeed
+     | where DestIP matches regex IPRegex
+     | distinct DestIP
+     );
+DeviceNetworkEvents
+| where RemoteIP in (MaliciousIP)
+
+##Defender For Endpoint
+let ThreatIntelFeed = externaldata(DestIP: string)[@"https://feodotracker.abuse.ch/downloads/ipblocklist_recommended.txt"] with (format="txt", ignoreFirstRecord=True);
+let IPRegex = '[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}';
+let MaliciousIP = materialize (
+     ThreatIntelFeed
+     | where DestIP matches regex IPRegex
+     | distinct DestIP
+     );
+DeviceNetworkEvents
+| where RemoteIP in (MaliciousIP)
+
+
