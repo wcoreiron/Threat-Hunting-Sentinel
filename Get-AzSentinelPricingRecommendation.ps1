@@ -388,5 +388,5 @@ foreach($subscription in $subscriptions) {
     $sentinelWorkspaces | Select-Object -Last 50 | Format-Table workspaceName, SubscriptionName, sentinelEnabled, retentionInDays, averageDailyIngest, currentSku, optimalSku, currentSentinelSku, optimalSentinelSku, billedRetentionGB
     # Notify is list is shortened
     If (($sentinelWorkspaces | Measure-Object).Count -gt 50) {
-        Write-Host "More than 20 workspaces found, output is truncated!" -ForegroundColor Red
+        Write-Host "More than 50 workspaces found, output is truncated!" -ForegroundColor Red
     }
